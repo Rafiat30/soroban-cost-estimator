@@ -14,6 +14,7 @@
 use std::path::{Path, PathBuf};
 use std::process::Command;
 
+use clap::CommandFactory;
 use sha2::Digest;
 use soroban_cost_estimator::cache;
 use soroban_cost_estimator::cli::Cli;
@@ -4976,7 +4977,6 @@ fn test_cache_delete_all_cannot_be_combined_with_a_filter() {
 /// Runs clap's built-in self-check over the whole command tree.
 #[test]
 fn verify_cli() {
-    use clap::CommandFactory;
     Cli::command().debug_assert();
 }
 

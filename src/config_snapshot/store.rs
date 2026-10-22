@@ -843,7 +843,10 @@ mod tests {
             list_snapshots_in(&dir, "net").expect("list").is_empty(),
             "'net' must not match 'testnet-' files"
         );
-        assert_eq!(list_snapshots_in(&dir, "testnet").expect("list"), vec![testnet]);
+        assert_eq!(
+            list_snapshots_in(&dir, "testnet").expect("list"),
+            vec![testnet]
+        );
         let _ = std::fs::remove_dir_all(&dir);
     }
 
@@ -896,12 +899,14 @@ mod tests {
         // Wrong extension, other network, plain prose, or a directory that
         // merely looks like a snapshot name — none belong in the listing.
         std::fs::write(dir.join("README.md"), "notes").expect("write readme");
-        std::fs::write(dir.join("testnet-2026-01-02T00-00-00+00-00.txt"), "{}")
-            .expect("write txt");
+        std::fs::write(dir.join("testnet-2026-01-02T00-00-00+00-00.txt"), "{}").expect("write txt");
         write_snapshot(&dir, "mainnet", timestamp("2026-03-01T00:00:00+00:00"), 9);
         std::fs::create_dir(dir.join("testnet-archive")).expect("create subdir");
 
-        assert_eq!(list_snapshots_in(&dir, "testnet").expect("list"), vec![snapshot]);
+        assert_eq!(
+            list_snapshots_in(&dir, "testnet").expect("list"),
+            vec![snapshot]
+        );
         let _ = std::fs::remove_dir_all(&dir);
     }
 

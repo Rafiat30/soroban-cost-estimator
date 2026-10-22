@@ -216,12 +216,22 @@ pub enum Command {
         /// Network to simulate against.
         #[arg(long, default_value = "testnet", value_parser = NetworkValueParser)]
         network: String,
+
+        /// Explicit RPC URL (overrides network-based resolution).
         #[arg(long)]
         rpc_url: Option<String>,
+
+        /// Contract function to simulate (omit for the default invocation).
         #[arg(long)]
         r#fn: Option<String>,
+
+        /// Deployed contract ID (64 hex chars) to invoke instead of a local
+        /// `.wasm` file.
         #[arg(long)]
         id: Option<String>,
+
+        /// Argument for the contract function, as `KEY=VALUE`. Repeat for
+        /// multiple arguments.
         #[arg(long = "arg", value_name = "KEY=VAL")]
         args: Vec<String>,
 
@@ -346,6 +356,7 @@ pub enum Command {
         #[arg(long = "fn", value_name = "NAME")]
         fn_names: Vec<String>,
 
+        /// Output the cost summary as JSON.
         #[arg(long)]
         json: bool,
 
@@ -354,9 +365,14 @@ pub enum Command {
         #[arg(long)]
         auto_snapshot: bool,
     },
+    /// Inspect a compiled Soroban WASM artifact (offline). Alias of
+    /// `wasm info`, kept for backwards compatibility.
     WasmInfo {
+        /// Path to the compiled Soroban contract `.wasm` file.
         #[arg(long, short)]
         wasm: String,
+
+        /// Output the full parsed spec/metadata as JSON.
         #[arg(long)]
         json: bool,
     },
@@ -365,17 +381,27 @@ pub enum Command {
         #[command(subcommand)]
         action: WasmAction,
     },
+    /// Fetch, diff, and manage network configuration snapshots.
     Config {
         #[command(subcommand)]
         action: ConfigAction,
     },
+
+    /// Query or manage the estimate cache.
     Cache {
         #[command(subcommand)]
         action: CacheAction,
     },
+
+    /// Poll the network's resource-pricing configuration on an interval and
+    /// print a diff whenever something changes.
     Watch {
+        /// Network to watch.
         #[arg(long, default_value = "testnet", value_parser = NetworkValueParser)]
         network: String,
+
+        /// Polling interval between configuration checks (e.g. "30s",
+        /// "5m", "1h").
         #[arg(long, default_value = "1h")]
         interval: String,
         /// Percentage threshold for flagging significant changes (e.g. 10 for 10%).
@@ -522,8 +548,11 @@ pub enum CacheAction {
 
     /// Pre-populate the cache by estimating every exported function.
     Warm {
+        /// Path to the compiled Soroban contract `.wasm` file.
         #[arg(long, short)]
         wasm: String,
+
+        /// Network to estimate against.
         #[arg(long, default_value = "testnet", value_parser = NetworkValueParser)]
         network: String,
 
@@ -534,6 +563,8 @@ pub enum CacheAction {
         /// Deployed contract ID (64 hex chars) to invoke each function against.
         #[arg(long)]
         id: Option<String>,
+
+        /// Output the warm-up summary as JSON.
         #[arg(long)]
         json: bool,
     },
@@ -695,10 +726,17 @@ pub enum ConfigAction {
     Snapshot {
         #[command(subcommand)]
         action: Option<SnapshotAction>,
+
+        /// Network to fetch the snapshot for.
         #[arg(long, default_value = "testnet")]
         network: String,
+
+        /// Write the snapshot to this path instead of the snapshots
+        /// directory.
         #[arg(long)]
         out: Option<String>,
+
+        /// Output the saved-snapshot summary as JSON.
         #[arg(long)]
         json: bool,
 
@@ -716,8 +754,11 @@ pub enum ConfigAction {
 
     /// Diff the current network config against the most recent snapshot.
     Diff {
+        /// Network to diff.
         #[arg(long, default_value = "testnet", value_parser = NetworkValueParser)]
         network: String,
+
+        /// Snapshot file to diff against instead of the most recent one.
         #[arg(long)]
         against: Option<String>,
 
@@ -754,15 +795,25 @@ pub enum ConfigAction {
         #[arg(long)]
         fail_on_any_change: bool,
     },
+    /// Show the full chronological change log across all stored snapshots
+    /// for a network.
     History {
+        /// Network whose snapshot history to inspect.
         #[arg(long, default_value = "testnet", value_parser = NetworkValueParser)]
         network: String,
     },
+
+    /// Show when each config setting last changed, across all stored
+    /// snapshots.
     LastChanged {
+        /// Network whose snapshot history to inspect.
         #[arg(long, default_value = "testnet", value_parser = NetworkValueParser)]
         network: String,
     },
+
+    /// Validate the stored snapshots for a network.
     Validate {
+        /// Network whose snapshots to validate.
         #[arg(long, default_value = "testnet", value_parser = NetworkValueParser)]
         network: String,
     },
