@@ -400,6 +400,11 @@ pub enum Command {
         #[arg(long, default_value = "testnet", value_parser = NetworkValueParser)]
         network: String,
 
+        /// RPC endpoint to watch (e.g. a `ws://` URL). Defaults to the
+        /// network's public endpoint.
+        #[arg(long)]
+        rpc_url: Option<String>,
+
         /// Polling interval between configuration checks (e.g. "30s",
         /// "5m", "1h").
         #[arg(long, default_value = "1h")]
